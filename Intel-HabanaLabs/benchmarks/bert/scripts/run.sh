@@ -116,18 +116,17 @@ export EVAL_FILES_DIR=${EVAL_FILES_DIR:-/root/datasets/bert_pretraining/evaluati
 if [ $USE_DRAM_OUTPUT == "True" ]; then
     host=$(hostname)
     if [ "$OMPI_COMM_WORLD_LOCAL_RANK" == "0" ]; then
-        mkdir -p /mnt/dramfs
-        mount -t tmpfs -o size=200g tmpfs /mnt/dramfs
+        mkdir -p ./dramfs
     fi
-    export OUTPUT_DIR=/mnt/dramfs/bert_gaudi${NUM_WORKERS_TOTAL}_${TESTDATE}_${TESTTIME}/${host}
+    export OUTPUT_DIR=./dramfs/bert_gaudi${NUM_WORKERS_TOTAL}_${TESTDATE}_${TESTTIME}/${host}
     mkdir -p $OUTPUT_DIR
 fi
 
 # clear cache
-if [[ $OMPI_COMM_WORLD_LOCAL_RANK -eq 0 ]]; then
-	sync
-	echo 3 > /proc/sys/vm/drop_caches
-fi
+#if [[ $OMPI_COMM_WORLD_LOCAL_RANK -eq 0 ]]; then
+#	sync
+#	echo 3 > /proc/sys/vm/drop_caches
+#fi
 
 #env > env_${OMPI_COMM_WORLD_LOCAL_RANK}.log
 if [ $PACKED_DATA == "False" ]; then
@@ -140,7 +139,7 @@ AUX_PARAMS=$(echo ${AUX_PARAMS} | sed s/:/\ /g)
 
 enable_device_warmup=True
 
-TRAIN_COMMAND="python3 ${BASE_PATH}/../TensorFlow/nlp/bert/run_pretraining.py \
+TRAIN_COMMAND="python3 ${BASE_PATH}/../implementations/TensorFlow/nlp/bert/run_pretraining.py \
 	--input_files_dir=$INPUT_FILES_DIR \
 	--init_checkpoint=$PHASE1_CKPT \
 	--eval_files_dir=$EVAL_FILES_DIR\

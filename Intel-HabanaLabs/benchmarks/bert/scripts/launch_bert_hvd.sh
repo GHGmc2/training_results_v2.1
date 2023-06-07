@@ -9,7 +9,7 @@ fi
 # Basic paths
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 export BASE_PATH="$( cd "$(dirname "$(readlink -f ${SCRIPT_DIR}/defaults.cfg)" )" && pwd)"
-SHARED_DIR=/root/shared
+SHARED_DIR=./shared
 exit_code=0
 
 OMPI_PREFIX=$(which mpirun)
@@ -334,14 +334,14 @@ fi
 
 # Set default values for environmental variable
 export HOST_FILE=${__hostfile:-"${OMPI_MCA_orte_default_hostfile}"}
-export HOST_FILE=${HOST_FILE:-"/root/shared/hosts"}
+export HOST_FILE=${HOST_FILE:-"./shared/hosts"}
 export SSH_PORT=${__ssh_port:-"3022"}
 
 export PROFILE_CONFIG_FILE=${__profile_cfg:-"synprof_mergedHW.json"}
 export PROFILE_CONFIG="${BASE_PATH}/../../../profile/${PROFILE_CONFIG_FILE}"
 
 if [[ -z "${HABANA_LOGS}" ]]; then
-	export HABANA_LOGS="/var/logs/habana_logs"
+	export HABANA_LOGS="./logs/habana_logs"
 	echo "Creating default directory for habana_logs."
 	mkdir -p $HABANA_LOGS
 fi
@@ -545,7 +545,7 @@ else
 
     export testdate=`date +%Y-%m-%d`
     export testtime=`date +%H%M%S`
-    export OUTPUT_DIR=${__output_dir:-/root/scratch/bert/bert_gaudi${NUM_WORKERS_TOTAL}_${testdate}_${testtime}}
+    export OUTPUT_DIR=${__output_dir:-./scratch/bert/bert_gaudi${NUM_WORKERS_TOTAL}_${testdate}_${testtime}}
 
     run_per_ip mkdir -p ${OUTPUT_DIR}
 
@@ -564,77 +564,9 @@ else
 	    MPIRUN_ARGS_MAP_BY_PE="--bind-to core --map-by $MPI_MAP_BY:PE=$MPI_MAP_BY_PE"
     fi
 
-    TRAINING_COMMAND="mpirun --allow-run-as-root \
-                --display-map \
-		--report-bindings \
-		--bind-to none \
-		-np ${NUM_WORKERS_TOTAL}\
-		--hostfile ${MPI_HOSTFILE_PATH} \
-		--prefix ${OMPI_PREFIX} \
-		--mca plm_rsh_args -p${SSH_PORT} \
-		--mca btl_tcp_if_include ${MPI_TCP_INCLUDE} \
-		--merge-stderr-to-stdout \
-		--tag-output \
-		--output-filename ${LOG_DIR}/bert_log \
-                -x USE_HOROVOD=${USE_HOROVOD} \
-		-x TF_MODULES_RELEASE_BUILD=/usr/lib/habanalabs/ \
-		-x GC_KERNEL_PATH=/usr/lib/habanalabs/libtpc_kernels.so \
-		-x HABANA_LOGS=${HABANA_LOGS} \
-		-x LEARNING_RATE=${LEARNING_RATE} \
-                -x STOP_THRESHOLD=${STOP_THRESHOLD} \
-                -x NUM_ACCUMULATION_STEPS=${NUM_ACCUMULATION_STEPS} \
-                -x TRAIN_BATCH_SIZE=${TRAIN_BATCH_SIZE} \
-                -x EVAL_BATCH_SIZE=${EVAL_BATCH_SIZE} \
-		-x TRAIN_STEPS=${TRAIN_STEPS} \
-                -x NUM_WORKERS_TOTAL=${NUM_WORKERS_TOTAL} \
-		-x WARMUP_STEPS=${WARMUP_STEPS} \
-		-x LAMB_BETA_1=${LAMB_BETA_1} \
-                -x LAMB_BETA_2=${LAMB_BETA_2} \
-		-x EPSILON=${EPSILON} \
-                -x LAMB_WEIGHT_DECAY_RATE=${LAMB_WEIGHT_DECAY_RATE} \
-		-x LAMB_LEARNING_RATE_DECAY_POLY_POWER=${LAMB_LEARNING_RATE_DECAY_POLY_POWER} \
-		-x SAMPLES_BETWEEN_EVAL=${SAMPLES_BETWEEN_EVAL} \
-		-x SAMPLES_START_EVAL=${SAMPLES_START_EVAL} \
-		-x MAX_EVAL_STEPS=${MAX_EVAL_STEPS} \
-		-x INPUT_FILES_DIR=${INPUT_FILES_DIR} \
-	        -x EVAL_FILES_DIR=${EVAL_FILES_DIR} \
-	        -x OUTPUT_DIR=${OUTPUT_DIR} \
-	        -x PHASE1_CKPT=${PHASE1_CKPT} \
-		-x BERT_CONFIG_DIR=${BERT_CONFIG_DIR} \
-		-x OPTIMIZE_DMA_ENGINES_ALLOCATION=${OPTIMIZE_DMA_ENGINES_ALLOCATION} \
-		-x RUN_TPC_FUSER=${RUN_TPC_FUSER} \
-		-x TF_CPU_RUNTIME_FALLBACK=${TF_CPU_RUNTIME_FALLBACK} \
-		-x TF_HCCL_MEMORY_ALLOWANCE_MB=${TF_HCCL_MEMORY_ALLOWANCE_MB} \
-		-x HABANA_INITIAL_WORKSPACE_SIZE_MB=${HABANA_INITIAL_WORKSPACE_SIZE_MB} \
-		-x HLS_TYPE=${HLS_TYPE} \
-		-x MPI_TCP_INCLUDE=${MPI_TCP_INCLUDE} \
-		-x SAVE_CHECKPOINTS_STEPS=${SAVE_CHECKPOINTS_STEPS} \
-		-x PACKED_DATA=${PACKED_DATA} \
-		-x TESTDATE=${testdate} \
-		-x TESTTIME=${testtime} \
-		-x PROFILE_CONFIG=${PROFILE_CONFIG} \
-		-x SYN_PROFILE=${SYN_PROFILE} \
-		-x TF_PROFILE_STEPS=${TF_PROFILE_STEPS} \
-		-x HW_PROFILE_RANGE=${HW_PROFILE_RANGE} \
-		-x CPU_BIND_TYPE=${CPU_BIND_TYPE} \
-		${MPIRUN_ARGS_MAP_BY_PE} \
-		-x NUM_WORKERS_PER_HLS=${NUM_WORKERS_PER_HLS} \
-		-x USE_DRAM_OUTPUT=${USE_DRAM_OUTPUT} \
-		-x USE_LIGHTWEIGHT_CHECKPOINT=${USE_LIGHTWEIGHT_CHECKPOINT} \
-		-x LIGHTWEIGHT_CHECKPOINT_IMPL=${LIGHTWEIGHT_CHECKPOINT_IMPL} \
-		-x USE_ASYNC_CHECKPOINTING=${USE_ASYNC_CHECKPOINTING} \
-		-x LOG_DIR=${LOG_DIR} \
-		-x PROFILE_ALL=${PROFILE_ALL} \
-		-x TF_RECIPE_CACHE_PATH \
-		-x DO_TRAIN=${DO_TRAIN} \
-		-x DO_EVAL=${DO_EVAL} \
-		-x EXPERIMENTAL_SLACK=${EXPERIMENTAL_SLACK} \
-		-x NUM_DIST_EVAL_WORKERS=${NUM_DIST_EVAL_WORKERS} \
-		-x WARMUP_STEPS=${WARMUP_STEPS}
-		-x AUX_PARAMS=${AUX_PARAMS} \
-		-x TF_ENABLE_DYNAMIC_SHAPES=${TF_ENABLE_DYNAMIC_SHAPES} \
-		-x OPTIMIZER=${OPTIMIZER} \
-		-x SIGNALING_FROM_GRAPH=${SIGNALING_FROM_GRAPH} \
+    TRAINING_COMMAND="mpiexec \
+		-l \
+                -np ${NUM_WORKERS_TOTAL}\
 		${BASE_PATH}/run.sh"
 
     echo "TRAINING COMMAND = ${TRAINING_COMMAND}"

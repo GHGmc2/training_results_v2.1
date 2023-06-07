@@ -1,0 +1,5 @@
+
+python pack_pretraining_data_tfrec.py \
+--input-dir /home/mge/dataset/bert_data/tfrecord/lower_case_1_seq_len_512_max_pred_76_masked_lm_prob_0.15_random_seed_12345_dupe_factor_5_shard_1472_test_split_10/wikicorpus_en/training \
+--output-dir /home/mge/dataset/bert_data/tfrecord/lower_case_1_seq_len_512_max_pred_76_masked_lm_prob_0.15_random_seed_12345_dupe_factor_5_shard_1472_test_split_10/wikicorpus_en/training_packed_1500 \
+--max-files 1500
