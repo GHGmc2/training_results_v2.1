@@ -1401,7 +1401,7 @@ if __name__ == "__main__":
     from habana_frameworks.tensorflow.multinode_helpers import comm_rank, comm_size, comm_local_rank
     from habana_frameworks.tensorflow import load_habana_module
   # else:
-  #   from TensorFlow.common.horovod_helpers_gpu import hvd, hvd_rank, hvd_size, comm_local_rank, comm_local_size
+  #   from TensorFlow.common.horovod_helpers_gpu import hvd, comm_local_rank, comm_size
 
   print("*****************************************")
   print("Arguments passed to this program: run_pretraining.")
