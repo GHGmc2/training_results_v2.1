@@ -19,7 +19,6 @@ export SAMPLES_START_EVAL=0
 export USE_LIGHTWEIGHT_CHECKPOINT=False # to WA the error "TensorFlow device (XPU:0) is being mapped to multiple devices"
 export LIGHTWEIGHT_CHECKPOINT_IMPL=basic
 export NUM_DIST_EVAL_WORKERS=8
-export OPTIMIZER=lamb
 
 export USE_HOROVOD=True
 if [ $USE_HOROVOD == "True" ]; then

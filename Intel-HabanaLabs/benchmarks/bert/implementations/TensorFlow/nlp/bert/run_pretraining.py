@@ -1059,7 +1059,6 @@ def main(_):
 
   if FLAGS.horovod:
     # WA for TF2.11: https://github.com/tensorflow/tensorflow/issues/58952
-    # TODO(Maozhou): upgrade to TF2
     gpus = tf.config.experimental.list_physical_devices('XPU')
     for gpu in gpus:
       tf.config.experimental.set_memory_growth(gpu, True)
