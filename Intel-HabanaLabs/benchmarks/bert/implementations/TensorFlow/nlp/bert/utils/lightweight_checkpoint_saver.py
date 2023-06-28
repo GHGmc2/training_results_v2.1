@@ -101,7 +101,7 @@ def vars_summary(var_list):
 
 def get_device_name_by_type(type):
     from tensorflow.python.client import device_lib
-
+    # FIXME(Maozhou): TensorFlow device (XPU:0) is being mapped to multiple devices
     local_devices = device_lib.list_local_devices()
 
     for local_dev in local_devices:
@@ -116,7 +116,7 @@ class LightweightCheckpointSaver(tf.compat.v1.train.Saver):
         self._lws_log_enabled = log_enabled
         self._variables_caching = variables_caching
 
-        rank = comm_rank()
+        rank = comm_rank
         self._lws_out_file = os.path.expanduser(os.path.join(log_dir, f"rank_{rank}_saver_log.txt"))
 
         var_list = tf.compat.v1.global_variables()

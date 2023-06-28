@@ -366,7 +366,8 @@ def get_assignment_map_from_checkpoint(tvars, init_checkpoint):
       continue
 
     tvar = name_to_variable[name]
-    assert is_resource_variable(tvar)
+    # ref: https://www.tensorflow.org/guide/migrate/tf1_vs_tf2#resourcevariables_instead_of_referencevariables
+    # assert is_resource_variable(tvar)
     assignment_map[name] = tvar
     initialized_variable_names[name] = 1
     initialized_variable_names[name + ":0"] = 1
