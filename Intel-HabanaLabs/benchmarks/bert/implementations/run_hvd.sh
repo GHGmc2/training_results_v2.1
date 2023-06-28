@@ -21,8 +21,8 @@ export DATASET_PATH=/home/mge/dataset/bert_data/tfrecord/lower_case_1_seq_len_51
 export INPUT_FILES_DIR_UNPACKED=$DATASET_PATH/training
 export INPUT_FILES_DIR_PACKED=$DATASET_PATH/training_packed
 export EVAL_FILES_DIR=$DATASET_PATH/test
-export INITIAL_CHECKPOINT=/home/mge/dataset/bert_data/download/MLPerf_BERT_checkpoint/tf2_ckpt/model.ckpt-28252
-#export INITIAL_CHECKPOINT=/home/mge/dataset/bert_data/download/MLPerf_BERT_checkpoint/tf1_ckpt/model.ckpt-28252
+# use tf1_ckpt for Habana BERT
+export INITIAL_CHECKPOINT=/home/mge/dataset/bert_data/download/MLPerf_BERT_checkpoint/tf1_ckpt/model.ckpt-28252
 export BERT_CONFIG_FILE=/home/mge/dataset/bert_data/download/google_pretrained_weights/uncased_L-24_H-1024_A-16/bert_config.json
 
 export PACKED_DATA=True
